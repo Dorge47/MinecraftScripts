@@ -8,16 +8,16 @@ function getModem()
 	end
 	return modemSide
 end
-function stopServer(port)
+function turtleServer(port)
 	local modem = peripheral.wrap(getModem())
 	if modem.isOpen(port) then
-		modem.close(port)
-		print("Server on port ",port," has been closed")
+		print("Server on port ",port," is already open!")
 	else
-		print("Server on port ",port," is not open!")
+		modem.open(port)
+		print("Turtle server started on port ",port)
 	end
 end
 io.write("Enter server port: ")
 local port = tonumber(io.read())
 io.write("\n")
-stopServer(port)
+turtleServer(port)
