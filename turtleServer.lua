@@ -25,7 +25,7 @@ function waitForInstruct(port)
 		if string.find(message," ") then
 			stepsForward = Split(message," ")[2]
 		end
-		if turtle.getFuelLevel < stepsForward then
+		if turtle.getFuelLevel() < stepsForward then
 			local modem = peripheral.wrap(getModem())
 			modem.transmit(replyChannel,senderChannel,"Not enough fuel")
 		else
