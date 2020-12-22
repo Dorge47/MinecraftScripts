@@ -35,7 +35,7 @@ function waitForInstruct(port)
 			end
 		end
 		waitForInstruct(port)
-	elseif message.find("stop")
+	elseif message.find("stop") then
 		local modem = peripheral.wrap(getModem())
 		modem.close(port)
 		local stopResponse = ("Server on port ",port," has been closed")
