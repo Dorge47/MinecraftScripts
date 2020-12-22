@@ -8,6 +8,40 @@ function getModem()
 	end
 	return modemSide
 end
+function Split(s, delimiter) -- Not my code, no touch
+    result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
+end
+function waitForInstruct(port)
+	os.pullEvent("modem_message")
+	local eventType, modemSide, senderChannel, replyChannel, message, senderDistance = os.pullEvent("modem_message")
+	if replyChannel ~= senderChannel then
+		-- Logic for replies will go here
+		waitForInstruct(port)
+	elseif message.find("forward") then
+		local stepsForward = 1
+		if message.find(" ") then
+			stepsForward = Split(message," ")[2]
+		end
+		if turtle.getFuelLevel < stepsForward then
+			local modem = peripheral.wrap(getModem())
+			modem.transmit(replyChannel,senderChannel,"Not enough fuel")
+		else
+			for x = 1, stepsForward, 1 do
+				turtle.forward()
+			end
+		end
+		waitForInstruct(port)
+	elseif message.find("stop")
+		local modem = peripheral.wrap(getModem())
+		modem.close(port)
+		local stopResponse = ("Server on port ",port," has been closed")
+		modem.transmit(replyChannel,senderChannel,stopResponse)
+	end
+end
 function turtleServer(port)
 	local modem = peripheral.wrap(getModem())
 	if modem.isOpen(port) then
@@ -15,6 +49,7 @@ function turtleServer(port)
 	else
 		modem.open(port)
 		print("Turtle server started on port ",port)
+		waitForInstruct(port)
 	end
 end
 io.write("Enter server port: ")
