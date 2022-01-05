@@ -1,13 +1,3 @@
-function getModem()
-	local modemSide = ""
-	periphs = peripheral.getNames()
-	for i=1,table.getn(periphs),1 do
-		if peripheral.getType(periphs[i]) == "modem" then
-			modemSide = periphs[i]
-		end
-	end
-	return modemSide
-end
 function Split(s, delimiter) -- Not my code, no touch
     result = {};
     for match in (s..delimiter):gmatch("(.-)"..delimiter) do
@@ -17,6 +7,7 @@ function Split(s, delimiter) -- Not my code, no touch
 end
 function waitForInstruct(port)
 	local eventType, modemSide, senderChannel, replyChannel, message, senderDistance = os.pullEvent("modem_message")
+	local modem = peripheral.find("modem")
 	if replyChannel ~= senderChannel then
 		-- Logic for replies will go here
 		waitForInstruct(port)
@@ -26,7 +17,6 @@ function waitForInstruct(port)
 			stepsForward = tonumber(Split(message," ")[2])
 		end
 		if turtle.getFuelLevel() < stepsForward then
-			local modem = peripheral.wrap(getModem())
 			modem.transmit(replyChannel,senderChannel,"Not enough fuel")
 		else
 			for x = 1, stepsForward, 1 do
@@ -40,7 +30,6 @@ function waitForInstruct(port)
 			stepsBack = tonumber(Split(message," ")[2])
 		end
 		if turtle.getFuelLevel() < stepsBack then
-			local modem = peripheral.wrap(getModem())
 			modem.transmit(replyChannel,senderChannel,"Not enough fuel")
 		else
 			for x = 1, stepsBack, 1 do
@@ -54,7 +43,6 @@ function waitForInstruct(port)
 			stepsUp = tonumber(Split(message," ")[2])
 		end
 		if turtle.getFuelLevel() < stepsUp then
-			local modem = peripheral.wrap(getModem())
 			modem.transmit(replyChannel,senderChannel,"Not enough fuel")
 		else
 			for x = 1, stepsUp, 1 do
@@ -68,7 +56,6 @@ function waitForInstruct(port)
 			stepsDown = tonumber(Split(message," ")[2])
 		end
 		if turtle.getFuelLevel() < stepsDown then
-			local modem = peripheral.wrap(getModem())
 			modem.transmit(replyChannel,senderChannel,"Not enough fuel")
 		else
 			for x = 1, stepsDown, 1 do
@@ -95,14 +82,13 @@ function waitForInstruct(port)
 		end
 		waitForInstruct(port)
 	elseif string.find(message,"stop") then
-		local modem = peripheral.wrap(getModem())
 		modem.close(port)
 		local stopResponse = "Server on port " .. port .. " has been closed"
 		modem.transmit(replyChannel,senderChannel,stopResponse)
 	end
 end
 function turtleServer(port)
-	local modem = peripheral.wrap(getModem())
+	local modem = peripheral.find("modem")
 	if modem.isOpen(port) then
 		print("Server on port ",port," is already open!")
 	else

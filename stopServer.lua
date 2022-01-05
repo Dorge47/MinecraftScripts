@@ -1,15 +1,5 @@
-function getModem()
-	local modemSide = ""
-	periphs = peripheral.getNames()
-	for i=1,table.getn(periphs),1 do
-		if peripheral.getType(periphs[i]) == "modem" then
-			modemSide = periphs[i]
-		end
-	end
-	return modemSide
-end
 function stopServer(port)
-	local modem = peripheral.wrap(getModem())
+	local modem = peripheral.find("modem")
 	if modem.isOpen(port) then
 		modem.close(port)
 		print("Server on port ",port," has been closed")
